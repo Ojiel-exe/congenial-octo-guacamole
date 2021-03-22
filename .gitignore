@@ -21,3 +21,57 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+
+$ git clone https://github.com/Ojiel-exe/congenial-octo-guacamole.git
+$ cd congenial-octo-guacamole
+
+alert("Hello, World!");
+
+$ npm init
+  ...
+  package name: @Ojiel-exe/congenial-octo-guacamole
+  ...
+  test command: exit 0
+  ...    
+
+$ npm install
+$ git add index.js package.json package-lock.json
+$ git commit -m "initialize npm package"
+$ git push
+
+$ release-package.yml
+name: Node.js Package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: npm ci
+      - run: npm test
+
+  publish-gpr:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://npm.pkg.github.com/
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          
+$ git add .github/workflows/release-package.yml
+$ git commit -m "workflow to publish package"
+$ git push
